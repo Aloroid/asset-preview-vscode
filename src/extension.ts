@@ -21,7 +21,7 @@ async function getImage(image: number) {
 				returnPolicy: "PlaceHolder",
 				size: "110x110",
 				format: "Png",
-				"isCircular": false
+				isCircular: false
 			},
 			validateStatus: () => {
 				return true;
