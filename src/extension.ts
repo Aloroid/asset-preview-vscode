@@ -1,11 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const prefix = "rbxassetid://";
 const cacheImages: Map<number, AxiosResponse> = new Map();
-const configuration = vscode.workspace.getConfiguration('roblox-asset-preview-vscode');
 
 async function getImage(image: number) {
 
@@ -33,7 +32,15 @@ async function getImage(image: number) {
 
 function getId(text: string, position: vscode.Position) {
 
-	const regex = /([0-9]*)/g;
+	const configuration = vscode.workspace.getConfiguration('roblox-asset-preview-vscode');
+	const requirePrefix = configuration.get("requirePrefix");
+
+	let regex = /([0-9]*)/g;
+	let match
+
+	if (requirePrefix) {
+		regex = /rbxassetid:\/\/([0-9]*)/g;
+	}
 
 	let begin: number = -1;
 	let id;
@@ -43,7 +50,7 @@ function getId(text: string, position: vscode.Position) {
 		const finish = begin + match[0].length;
 
 		if (position.character >= begin && position.character <= finish) {
-			id = +match[0];
+			id = +match[1];
 			break;
 		}
 	}
@@ -51,16 +58,6 @@ function getId(text: string, position: vscode.Position) {
 	if (id === undefined || begin === -1) {
 		return undefined;
 	};
-
-	// Check if we need to
-	let showIdsForAny = configuration.get("showIdsForAnyNumber");
-
-	if (showIdsForAny === false) {
-		let startsWith = text.startsWith(prefix, begin - prefix.length);
-		if (startsWith === false) {
-			return undefined;
-		}
-	}
 
 	return id;
 

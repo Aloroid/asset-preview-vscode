@@ -1,7 +1,7 @@
 {
   "name": "roblox-asset-preview-vscode",
   "displayName": "Roblox Asset Preview",
-  "description": "Allows for the hovering of `rbxassetid://` to view assets",
+  "description": "Allows for the hovering of `rbxassetid://` to preview assets",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.80.0"
@@ -19,11 +19,11 @@
     "configuration": {
       "title": "Roblox Asset Preview",
       "properties": {
-        "roblox-asset-preview-vscode.showIdsForAnyNumber": {
-          "title": "Show a preview for any number",
+        "roblox-asset-preview-vscode.requirePrefix": {
+          "title": "Require Prefix",
           "type": "boolean",
           "default": false,
-          "description": "Shows a preview for any number"
+          "description": "Requires `rbxassetid://` at the start of a number in order to show a preview"
         }
       }
     }
