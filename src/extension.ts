@@ -36,7 +36,6 @@ function getId(text: string, position: vscode.Position) {
 	const requirePrefix = configuration.get("requirePrefix");
 
 	let regex = /([0-9]*)/g;
-	let match
 
 	if (requirePrefix) {
 		regex = /rbxassetid:\/\/([0-9]*)/g;
