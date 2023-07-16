@@ -2,6 +2,10 @@
   "name": "roblox-asset-preview-vscode",
   "displayName": "Roblox Asset Preview",
   "description": "Allows for the hovering of `rbxassetid://` to preview assets",
+  "repository": {
+    "type": "git",
+    "url": "github.com/aloroid/asset-preview-vscode"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.80.0"
