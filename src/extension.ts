@@ -132,12 +132,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// Search from the cache if there is anything in there
 			const image = await cacheImages.fetch(id) || "";
-			//const productData = await cacheProductInfo.fetch(id) || "";
+			const productData = await cacheProductInfo.fetch(id) || "";
 
 			if (token.isCancellationRequested === true) {
 				return undefined;
 			} else {
-				return new vscode.Hover(image);
+				return new vscode.Hover(image + "\n\n" + productData);
 			}
 
 		}
