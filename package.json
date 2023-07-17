@@ -24,10 +24,40 @@
       "title": "Roblox Asset Preview",
       "properties": {
         "roblox-asset-preview-vscode.requirePrefix": {
-          "title": "Require Prefix",
           "type": "boolean",
           "default": false,
           "description": "Requires `rbxassetid://` at the start of a number in order to show a preview"
+        },
+        "roblox-asset-preview-vscode.imageSize": {
+          "type": "string",
+          "default": "110x110",
+          "description": "The expected size for a given image that will be passed to the preview. Changing this clears the cache.",
+          "enum": [
+            "30x30",
+            "42x42",
+            "50x50",
+            "60x62",
+            "75x75",
+            "110x110",
+            "140x140",
+            "150x150",
+            "160x100",
+            "160x600",
+            "250x250",
+            "256x144",
+            "300x250",
+            "304x166",
+            "384x216",
+            "396x216",
+            "420x420",
+            "480x270",
+            "512x512",
+            "576x324",
+            "700x700",
+            "728x90",
+            "768x432",
+            "1200x80"
+          ]
         }
       }
     }
@@ -54,6 +84,7 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "lru-cache": "^10.0.0"
   }
 }
