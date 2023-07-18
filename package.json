@@ -58,6 +58,24 @@
             "768x432",
             "1200x80"
           ]
+        },
+        "roblox-asset-preview-vscode.order": {
+          "title": "Preview Schema",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "Image",
+            "Name",
+            "Creator",
+            "---",
+            "Description",
+            "---",
+            "Created",
+            "Updated"
+          ],
+          "description": "The order in which to show elements"
         }
       }
     }

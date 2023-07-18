@@ -7,6 +7,48 @@ import * as vscode from 'vscode';
 import axios from 'axios';
 import { LRUCache } from 'lru-cache';
 
+type ProductInfo = {
+	TargetId: number,
+	ProductType: string | null,
+	AssetId: number,
+	ProductId: number,
+	Name: string,
+	Description: string,
+	AssetTypeId: number,
+	Creator: {
+		Id: number,
+		Name: string,
+		CreatorType: "User" | "Group",
+		CreatorTargetId: number,
+		HasVerifiedBadge: boolean
+	},
+	IconImageAssetId: number,
+	Created: Date,
+	Updated: Date,
+
+	[key: string]: unknown
+};
+
+const defaultProductInfo: ProductInfo = {
+	TargetId: 0,
+	ProductType: null,
+	AssetId: 0,
+	ProductId: 0,
+	Name: "unknown",
+	Description: "unknown",
+	AssetTypeId: 0,
+	Creator: {
+		Id: 0,
+		Name: "unknown",
+		CreatorType: "User",
+		CreatorTargetId: 0,
+		HasVerifiedBadge: false
+	},
+	IconImageAssetId: 0,
+	Created: new Date(),
+	Updated: new Date(),
+};
+
 let size = "110x110";
 const cacheImages: LRUCache<number, string> = new LRUCache({
 	max: 10000,
@@ -38,7 +80,7 @@ const cacheImages: LRUCache<number, string> = new LRUCache({
 
 	}
 });
-const cacheProductInfo: LRUCache<number, string> = new LRUCache({
+const cacheProductInfo: LRUCache<number, ProductInfo> = new LRUCache({
 	max: 1000,
 	ttl: 1000 * 60 * 5, // 5 minutes
 
@@ -60,15 +102,10 @@ const cacheProductInfo: LRUCache<number, string> = new LRUCache({
 		const created = new Date(productData.Created);
 		const updated = new Date(productData.Updated);
 
-		return `
-Name: ${productData.Name}  
-Created By: ${productData.Creator.Name}  
----
-${productData.Description}\n
----
-Created At: ${created.toUTCString()}  
-Last Updated: ${updated.toUTCString()}
-`;
+		productData.Created = created;
+		productData.Updated = updated;
+
+		return productData;
 
 	}
 });
@@ -132,12 +169,57 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// Search from the cache if there is anything in there
 			const image = await cacheImages.fetch(id) || "";
-			const productData = await cacheProductInfo.fetch(id) || "";
+			const productData = await cacheProductInfo.fetch(id) || defaultProductInfo;
+			const order = configuration.get("order") as Array<string>;
 
 			if (token.isCancellationRequested === true) {
 				return undefined;
 			} else {
-				return new vscode.Hover(image + "\n\n" + productData);
+
+				let str = "";
+
+				order.forEach(key => {
+
+					if (key === "Image") {
+						str += image + "\n";
+					} else if (key === "---") {
+						str += "---\n";
+					} else if (key === "Creator") {
+						let link;
+
+						if (productData.Creator.CreatorType === "User") {
+							link = `https://www.roblox.com/users/${productData.Creator.Id}`;
+						} else {
+							link = `https://www.roblox.com/groups/${productData.Creator.Id}`;
+						}
+
+						str += `**${key}:** `;
+						str += `[${productData.Creator.Name}](${link})`;
+						str += "   ";
+					} else if (key === "Link") {
+						str += `[Link](https://www.roblox.com/library/${productData.AssetId})`;
+						str += "   ";
+					} else {
+						str += `**${key}:** `;
+
+						const value = productData[key] as unknown;
+
+						if (value instanceof Date) {
+							str += value.toUTCString();
+							str += "   ";
+						} else if (key === "Description") {
+							str += "   \n" + value;
+						} else {
+							str += value;
+						}
+						str += "   ";
+					}
+
+					str += "\n";
+
+				});
+
+				return new vscode.Hover(str);
 			}
 
 		}
